@@ -51,6 +51,8 @@ An editor should start with the model's top 100 items and inspect them in the pr
 
 These are measured, directional decision-support recommendations. They do not show that a refresh causes visibility to improve, and they must not be used for automatic publishing.
 
+The reproducible handoff is `action_queue` in the capstone notebook. It ranks the top 100 model scores and exposes only priority rank, opportunity score, recommended action, and reason codes. It deliberately omits client and content identifiers from the displayed recommendation frame.
+
 ## 8. Reproducibility
 
 Open `work/notebooks/capstone.ipynb` in a fresh Colab runtime, request access to `FlyRank/internship-warehouse`, and add a read token as the `HF_TOKEN` Colab secret. The notebook installs its dependencies, reads the gated warehouse through DuckDB, creates a local ignored parquet cache, fits all candidates with random seed 42, selects using May, and evaluates June once as the sealed cohort. Supporting feature and scoring code is in `work/scripts/capstone_data.py` and `work/scripts/capstone_utils.py`; unit checks run with `python -m unittest work.tests.test_capstone_utils -v`.

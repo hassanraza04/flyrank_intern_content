@@ -87,6 +87,40 @@ def reason_codes(row: pd.Series) -> list[str]:
     return codes or ["monitor_for_more_evidence"]
 
 
+def recommended_action(row: pd.Series) -> str:
+    """Choose one human-review action from signals known at the decision moment."""
+    if row["impression_change_pct"] <= -0.20:
+        return "refresh_review"
+    if row["position_change"] >= 1.0:
+        return "search_intent_review"
+    if row["current_ctr"] < 1.0:
+        return "snippet_review"
+    return "monitor"
+
+
+def build_private_action_queue(
+    frame: pd.DataFrame, scores: pd.Series, top_n: int = 100
+) -> pd.DataFrame:
+    """Return ranked public-safe action metadata without client or content identifiers."""
+    if top_n < 1:
+        raise ValueError("top_n must be at least 1")
+    if len(frame) != len(scores):
+        raise ValueError("frame and scores must have the same length")
+
+    ranked = frame.copy()
+    ranked["opportunity_score"] = pd.Series(scores, index=ranked.index)
+    ranked = ranked.sort_values("opportunity_score", ascending=False).head(top_n).copy()
+    queue = pd.DataFrame(
+        {
+            "priority_rank": range(1, len(ranked) + 1),
+            "opportunity_score": ranked["opportunity_score"].to_numpy(),
+            "recommended_action": ranked.apply(recommended_action, axis=1).to_numpy(),
+            "reason_codes": ranked.apply(reason_codes, axis=1).to_list(),
+        }
+    )
+    return queue.reset_index(drop=True)
+
+
 def public_summary(frame: pd.DataFrame) -> dict[str, Any]:
     """Create aggregate counts suitable for a public paper without raw ranked rows."""
     action_counts = frame["action"].value_counts().to_dict()

@@ -1,6 +1,7 @@
 import unittest
 
 import pandas as pd
+from work.scripts import capstone_utils
 
 from work.scripts.capstone_utils import (
     add_baseline_score,
@@ -10,6 +11,33 @@ from work.scripts.capstone_utils import (
 
 
 class CapstoneUtilsTest(unittest.TestCase):
+    def test_private_action_queue_ranks_scores_and_excludes_identifiers(self):
+        frame = pd.DataFrame(
+            {
+                "client_hash_id": ["client_a", "client_b", "client_c"],
+                "content_hash_id": ["content_a", "content_b", "content_c"],
+                "impression_change_pct": [-0.30, -0.05, -0.22],
+                "position_change": [1.5, 0.2, 0.1],
+                "current_impressions": [900, 700, 650],
+                "current_ctr": [0.7, 0.5, 1.3],
+            }
+        )
+
+        self.assertTrue(hasattr(capstone_utils, "build_private_action_queue"))
+        queue = capstone_utils.build_private_action_queue(
+            frame, pd.Series([0.40, 0.91, 0.72]), top_n=2
+        )
+
+        self.assertEqual(queue["priority_rank"].tolist(), [1, 2])
+        self.assertEqual(queue["opportunity_score"].tolist(), [0.91, 0.72])
+        self.assertEqual(queue["recommended_action"].tolist(), ["snippet_review", "refresh_review"])
+        self.assertEqual(
+            queue.loc[0, "reason_codes"],
+            ["meaningful_search_visibility", "low_ctr_review_candidate"],
+        )
+        self.assertNotIn("client_hash_id", queue.columns)
+        self.assertNotIn("content_hash_id", queue.columns)
+
     def test_precision_at_k_uses_top_scores(self):
         labels = pd.Series([0, 1, 1, 0])
         scores = pd.Series([0.1, 0.9, 0.8, 0.2])
