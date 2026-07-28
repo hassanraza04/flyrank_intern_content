@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A public-safe research paper on ranking search content for human refresh review.">
+    <title>Refresh Opportunity Scoring | FlyRank ML Capstone</title>
+    <link rel="stylesheet" href="assets/paper.css">
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="shell">
+        <strong>FlyRank ML Capstone</strong>
+        <nav aria-label="Primary navigation">
+          <a href="#results">Results</a>
+          <a href="#recommendations">Action playbook</a>
+          <a href="https://github.com/hassanraza04/flyrank_intern_content">Repository</a>
+        </nav>
+      </div>
+    </div>
+
+    <header>
+      <div class="shell">
+        <p class="eyebrow">Search intelligence research paper</p>
+        <h1>Which content deserves a human refresh review first?</h1>
+        <p class="lede">A time-aware ranking model for finding established content items whose search impressions are likely to decline over the next 28 days.</p>
+        <div class="meta">
+          <span class="pill">Hassan Raza</span>
+          <span class="pill">Refresh / Content Opportunity Scoring</span>
+          <span class="pill">Public-safe summary</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="shell">
+      <div class="grid">
+        <article>
+          <section id="abstract">
+            <p class="eyebrow">Abstract</p>
+            <div class="abstract">
+              <p>This project asks which established content items an editor should review first when their search impressions may fall in the next 28 days. I built a page-level ranking model from completed search-performance windows and compared it with a transparent momentum rule. Candidate models were selected on May 2026 and evaluated once on a sealed June 2026 outcome cohort. The selected histogram gradient-boosting model achieved 0.65 precision@100 on the sealed cohort, compared with 0.38 for the fixed baseline. This is measured, directional decision support for human review, not a claim about Google's algorithm or evidence that refreshing content causes an improvement.</p>
+            </div>
+          </section>
+
+          <section id="problem">
+            <p class="eyebrow">Introduction / problem statement</p>
+            <h2>Prioritise scarce editorial attention</h2>
+            <p>One row is one anonymised client-content item at a decision date. The output is a ranked private review queue. A wrong recommendation can waste time on a stable item, while a missed recommendation can leave a potentially important decline unreviewed. The model does not publish, rewrite, or change content automatically. It helps an editor decide where to look first.</p>
+            <div class="cards" aria-label="Study summary">
+              <div class="card"><strong>213,414</strong><span>Development plus validation rows</span></div>
+              <div class="card"><strong>46,898</strong><span>Sealed June rows</span></div>
+              <div class="card"><strong>7</strong><span>Past-window input features</span></div>
+            </div>
+            <p class="note">The development and validation total is 162,679 + 50,735 = 213,414 rows. The model is trained on the first figure and selected on the second.</p>
+          </section>
+
+          <section id="data">
+            <p class="eyebrow">Data</p>
+            <h2>Completed windows only, with a sealed outcome month</h2>
+            <p>The analysis uses the FlyRank internship warehouse table <code>fact_content_daily_performance</code> through DuckDB. It reads September 2025 to June 2026 partitions and includes stable clients with Search Console coverage from the beginning of the study. Two completed 28-day windows form the inputs. The next completed 28-day window forms the outcome proxy.</p>
+            <p>The proxy label is positive when next-window impressions are below 80% of current-window impressions. I excluded IDs, raw client or content identifiers, domains, URLs, titles, queries, GA4 engagement fields with uneven availability, and all future-window values. No raw warehouse rows or credentials appear in this public page or repository.</p>
+          </section>
+
+          <section id="method">
+            <p class="eyebrow">Methodology</p>
+            <h2>A fair rule, then an honest model comparison</h2>
+            <p>The baseline ranks items with falling recent impressions, weighted by current visibility, with a small extra weight for worsening average position. Logistic regression and histogram gradient boosting use the same seven eligible features: current impressions on a log scale, impression change, click change, current CTR, current average position, position change, and active days.</p>
+            <p>December 2025 through April 2026 cohorts train the candidates. May selects the method. June is sealed until the final measurement. The label and next-window values are forbidden model inputs. The random seed is fixed at 42.</p>
+          </section>
+
+          <section id="results">
+            <p class="eyebrow">Results</p>
+            <h2>The model improved the top-of-queue review signal</h2>
+            <figure class="chart">
+              <figcaption>Precision@100: share of the top 100 items that met the future decline proxy</figcaption>
+              <div class="bar-group">
+                <div class="bar-label"><span>May validation · gradient boosting</span><strong>0.79</strong></div>
+                <div class="track"><div class="bar validation" style="width:79%"></div></div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-label"><span>May validation · momentum baseline</span><strong>0.69</strong></div>
+                <div class="track"><div class="bar baseline" style="width:69%"></div></div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-label"><span>Sealed June · gradient boosting</span><strong>0.65</strong></div>
+                <div class="track"><div class="bar" style="width:65%"></div></div>
+              </div>
+              <div class="bar-group">
+                <div class="bar-label"><span>Sealed June · momentum baseline</span><strong>0.38</strong></div>
+                <div class="track"><div class="bar baseline" style="width:38%"></div></div>
+              </div>
+            </figure>
+            <table>
+              <thead><tr><th>Cohort</th><th>Method</th><th class="num">Base rate</th><th class="num">Precision@100</th><th class="num">ROC-AUC</th></tr></thead>
+              <tbody>
+                <tr><td>May 2026 validation</td><td>Histogram gradient boosting</td><td class="num">0.447</td><td class="num">0.79</td><td class="num">0.593</td></tr>
+                <tr><td>May 2026 validation</td><td>Momentum baseline</td><td class="num">0.447</td><td class="num">0.69</td><td class="num">0.522</td></tr>
+                <tr><td>June 2026 sealed</td><td>Histogram gradient boosting</td><td class="num">0.519</td><td class="num">0.65</td><td class="num">0.560</td></tr>
+                <tr><td>June 2026 sealed</td><td>Momentum baseline</td><td class="num">0.519</td><td class="num">0.38</td><td class="num">0.504</td></tr>
+              </tbody>
+            </table>
+            <p>The selected model improved sealed precision@100 by 0.27 over the baseline. Its ROC-AUC is modest, so the main use is prioritising a limited review queue, not making certain item-level predictions. The decline from validation to June is reported as uncertainty, not hidden.</p>
+          </section>
+
+          <section id="recommendations">
+            <p class="eyebrow">Ranked recommendations</p>
+            <h2>Use the score to start a human review, never to automate a change</h2>
+            <ol>
+              <li><strong>Start with the top 100 private scores.</strong> In the sealed measurement, 65% met the decline proxy, compared with 38% from the transparent baseline.</li>
+              <li><strong>Choose refresh review</strong> when an important visible item also shows negative recent search momentum.</li>
+              <li><strong>Choose search-intent review</strong> when average position worsens, after checking page and query context privately.</li>
+              <li><strong>Choose snippet review</strong> only after a visible, relevant item also shows low CTR.</li>
+              <li><strong>Choose monitoring</strong> for weak or conflicting signals.</li>
+            </ol>
+          </section>
+
+          <section id="limitations">
+            <p class="eyebrow">Limitations and honest framing</p>
+            <h2>A ranking proxy, not a causal answer</h2>
+            <p>The outcome is an impression-change proxy. Search demand, seasonality, indexing, measurement changes, and other unobserved factors can affect it. The evaluation cohorts are time-aware but not an intervention study. I therefore describe this work as observed, measured, directional, and useful for decision support. It does not prove that a refresh improves visibility or that the model captures Google's ranking rules.</p>
+          </section>
+
+          <section id="reproducibility">
+            <p class="eyebrow">Reproducibility</p>
+            <h2>Run the same public-safe workflow</h2>
+            <p>The executed notebook, feature builder, scoring helpers, and tests are in the public repository. A fresh Colab runtime needs only an approved Hugging Face read token stored as the <code>HF_TOKEN</code> secret. The local feature cache is ignored by Git, and the public work contains only code, aggregate metrics, and narrative.</p>
+            <p><a href="https://github.com/hassanraza04/flyrank_intern_content/blob/main/work/notebooks/capstone.ipynb">Open the capstone notebook</a> · <a href="https://github.com/hassanraza04/flyrank_intern_content/blob/main/work/capstone_report.md">Read the full report</a> · <a href="https://github.com/hassanraza04/flyrank_intern_content">View repository</a></p>
+          </section>
+        </article>
+
+        <aside>
+          <div class="side-card">
+            <h2>Decision card</h2>
+            <ul>
+              <li><strong>Unit:</strong> client-content item</li>
+              <li><strong>Output:</strong> ranked private review queue</li>
+              <li><strong>Target:</strong> next-window decline proxy</li>
+              <li><strong>Primary metric:</strong> precision@100</li>
+              <li><strong>Selected method:</strong> gradient boosting</li>
+            </ul>
+          </div>
+          <div class="side-card safety">
+            <h2>Public-safety note</h2>
+            <p>No client names, domains, URLs, private queries, raw rows, or credentials are published here.</p>
+          </div>
+          <div class="side-card">
+            <h2>Re-run</h2>
+            <span class="code">work/notebooks/capstone.ipynb</span>
+            <p class="note">Run in Colab with a secret named <code>HF_TOKEN</code>.</p>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer>
+      <div class="shell">Built on the <a href="https://flyrank.ai">FlyRank ML Internship dataset</a>. This page is a public-safe research summary.</div>
+    </footer>
+  </body>
+</html>
