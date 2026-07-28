@@ -1,5 +1,6 @@
 import unittest
 
+import numpy as np
 import pandas as pd
 from work.scripts import capstone_utils
 
@@ -11,6 +12,29 @@ from work.scripts.capstone_utils import (
 
 
 class CapstoneUtilsTest(unittest.TestCase):
+    def test_imputed_feature_frame_uses_reference_medians_and_is_finite(self):
+        reference = pd.DataFrame(
+            {
+                "current_ctr": [1.0, 3.0, np.nan],
+                "position_change": [0.0, np.inf, 2.0],
+            }
+        )
+        target = pd.DataFrame(
+            {
+                "current_ctr": [np.nan, np.inf],
+                "position_change": [-np.inf, np.nan],
+            }
+        )
+
+        self.assertTrue(hasattr(capstone_utils, "imputed_feature_frame"))
+        result = capstone_utils.imputed_feature_frame(
+            target, reference, ["current_ctr", "position_change"]
+        )
+
+        self.assertTrue(np.isfinite(result.to_numpy()).all())
+        self.assertEqual(result["current_ctr"].tolist(), [2.0, 2.0])
+        self.assertEqual(result["position_change"].tolist(), [1.0, 1.0])
+
     def test_private_action_queue_ranks_scores_and_excludes_identifiers(self):
         frame = pd.DataFrame(
             {
@@ -61,6 +85,20 @@ class CapstoneUtilsTest(unittest.TestCase):
         scored = add_baseline_score(frame)
 
         self.assertGreater(scored.loc[0, "baseline_score"], scored.loc[1, "baseline_score"])
+
+    def test_baseline_score_treats_missing_momentum_as_no_signal(self):
+        frame = pd.DataFrame(
+            {
+                "current_impressions": [1000.0],
+                "impression_change_pct": [np.nan],
+                "position_change": [np.nan],
+                "current_ctr": [1.0],
+            }
+        )
+
+        scored = add_baseline_score(frame)
+
+        self.assertEqual(scored.loc[0, "baseline_score"], 0.0)
 
 
 if __name__ == "__main__":

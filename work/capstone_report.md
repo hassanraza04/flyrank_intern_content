@@ -21,6 +21,8 @@ The transparent baseline gives priority to items with declining recent impressio
 
 I compared logistic regression and shallow histogram gradient boosting against the baseline. The target is a future decline proxy: the following 28-day impression total is below 80% of the current 28-day total. The seven model features are log current impressions, impression change percentage, click change percentage, current CTR, current average position, position change, and number of active days in the current window. Every feature is available at the decision moment because it is derived only from completed previous and current windows.
 
+Missing and non-finite feature values are replaced with medians learned from the applicable training frame only. The validation and sealed cohorts never contribute to the medians used to score themselves.
+
 The selected method was histogram gradient boosting. It can represent combinations such as meaningful visibility plus worsening position plus weak recent momentum without assuming that every signal has one linear effect. It is still a ranking aid, not an explanation of Google's ranking systems.
 
 ## 5. Evaluation

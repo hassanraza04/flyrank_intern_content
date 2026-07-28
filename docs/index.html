@@ -64,7 +64,7 @@
           <section id="method">
             <p class="eyebrow">Methodology</p>
             <h2>A fair rule, then an honest model comparison</h2>
-            <p>The baseline ranks items with falling recent impressions, weighted by current visibility, with a small extra weight for worsening average position. Logistic regression and histogram gradient boosting use the same seven eligible features: current impressions on a log scale, impression change, click change, current CTR, current average position, position change, and active days.</p>
+            <p>The baseline ranks items with falling recent impressions, weighted by current visibility, with a small extra weight for worsening average position. Logistic regression and histogram gradient boosting use the same seven eligible features: current impressions on a log scale, impression change, click change, current CTR, current average position, position change, and active days. Missing or non-finite values are imputed from training-window medians only.</p>
             <p>December 2025 through April 2026 cohorts train the candidates. May selects the method. June is sealed until the final measurement. The label and next-window values are forbidden model inputs. The random seed is fixed at 42.</p>
           </section>
 

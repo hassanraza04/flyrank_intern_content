@@ -36,12 +36,22 @@ def validate_feature_columns(columns: list[str]) -> None:
         raise ValueError(f"Forbidden feature columns: {', '.join(blocked)}")
 
 
+def imputed_feature_frame(
+    frame: pd.DataFrame, reference: pd.DataFrame, columns: list[str]
+) -> pd.DataFrame:
+    """Replace non-finite values using medians learned only from a reference frame."""
+    values = frame.loc[:, columns].replace([np.inf, -np.inf], np.nan)
+    reference_values = reference.loc[:, columns].replace([np.inf, -np.inf], np.nan)
+    medians = reference_values.median().fillna(0.0)
+    return values.fillna(medians).astype(float)
+
+
 def add_baseline_score(frame: pd.DataFrame) -> pd.DataFrame:
     """Score visible pages with recent downward momentum using a transparent rule."""
     scored = frame.copy()
-    decline = (-scored["impression_change_pct"]).clip(lower=0)
-    demand = np.log1p(scored["current_impressions"]).clip(lower=0)
-    position_worsening = scored["position_change"].clip(lower=0)
+    decline = (-scored["impression_change_pct"].fillna(0)).clip(lower=0)
+    demand = np.log1p(scored["current_impressions"].fillna(0)).clip(lower=0)
+    position_worsening = scored["position_change"].fillna(0).clip(lower=0)
     scored["baseline_score"] = decline * demand + 0.10 * position_worsening
     return scored
 
