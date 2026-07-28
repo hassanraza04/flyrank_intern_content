@@ -38,7 +38,7 @@
           <section id="abstract">
             <p class="eyebrow">Abstract</p>
             <div class="abstract">
-              <p>This project asks which established content items an editor should review first when their search impressions may fall in the next 28 days. I built a page-level ranking model from completed search-performance windows and compared it with a transparent momentum rule. Candidate models were selected on May 2026 and evaluated once on a sealed June 2026 outcome cohort. The selected histogram gradient-boosting model achieved 0.65 precision@100 on the sealed cohort, compared with 0.38 for the fixed baseline. This is measured, directional decision support for human review, not a claim about Google's algorithm or evidence that refreshing content causes an improvement.</p>
+              <p>This project asks which established content items an editor should review first when their search impressions may fall in the next 28 days. I built a page-level ranking model from completed search-performance windows and compared it with a transparent momentum rule. Candidate models were selected on May 2026 and evaluated once on a sealed June 2026 outcome cohort. The selected histogram gradient-boosting model achieved 0.67 precision@100 on the sealed cohort, compared with 0.38 for the fixed baseline. This is measured, directional decision support for human review, not a claim about Google's algorithm or evidence that refreshing content causes an improvement.</p>
             </div>
           </section>
 
@@ -74,16 +74,16 @@
             <figure class="chart">
               <figcaption>Precision@100: share of the top 100 items that met the future decline proxy</figcaption>
               <div class="bar-group">
-                <div class="bar-label"><span>May validation · gradient boosting</span><strong>0.79</strong></div>
-                <div class="track"><div class="bar validation" style="width:79%"></div></div>
+                <div class="bar-label"><span>May validation · gradient boosting</span><strong>0.80</strong></div>
+                <div class="track"><div class="bar validation" style="width:80%"></div></div>
               </div>
               <div class="bar-group">
                 <div class="bar-label"><span>May validation · momentum baseline</span><strong>0.69</strong></div>
                 <div class="track"><div class="bar baseline" style="width:69%"></div></div>
               </div>
               <div class="bar-group">
-                <div class="bar-label"><span>Sealed June · gradient boosting</span><strong>0.65</strong></div>
-                <div class="track"><div class="bar" style="width:65%"></div></div>
+                <div class="bar-label"><span>Sealed June · gradient boosting</span><strong>0.67</strong></div>
+                <div class="track"><div class="bar" style="width:67%"></div></div>
               </div>
               <div class="bar-group">
                 <div class="bar-label"><span>Sealed June · momentum baseline</span><strong>0.38</strong></div>
@@ -93,20 +93,20 @@
             <table>
               <thead><tr><th>Cohort</th><th>Method</th><th class="num">Base rate</th><th class="num">Precision@100</th><th class="num">ROC-AUC</th></tr></thead>
               <tbody>
-                <tr><td>May 2026 validation</td><td>Histogram gradient boosting</td><td class="num">0.447</td><td class="num">0.79</td><td class="num">0.593</td></tr>
+                <tr><td>May 2026 validation</td><td>Histogram gradient boosting</td><td class="num">0.447</td><td class="num">0.80</td><td class="num">0.591</td></tr>
                 <tr><td>May 2026 validation</td><td>Momentum baseline</td><td class="num">0.447</td><td class="num">0.69</td><td class="num">0.522</td></tr>
-                <tr><td>June 2026 sealed</td><td>Histogram gradient boosting</td><td class="num">0.519</td><td class="num">0.65</td><td class="num">0.560</td></tr>
+                <tr><td>June 2026 sealed</td><td>Histogram gradient boosting</td><td class="num">0.519</td><td class="num">0.67</td><td class="num">0.559</td></tr>
                 <tr><td>June 2026 sealed</td><td>Momentum baseline</td><td class="num">0.519</td><td class="num">0.38</td><td class="num">0.504</td></tr>
               </tbody>
             </table>
-            <p>The selected model improved sealed precision@100 by 0.27 over the baseline. Its ROC-AUC is modest, so the main use is prioritising a limited review queue, not making certain item-level predictions. The decline from validation to June is reported as uncertainty, not hidden.</p>
+            <p>The selected model improved sealed precision@100 by 0.29 over the baseline. Its ROC-AUC is modest, so the main use is prioritising a limited review queue, not making certain item-level predictions. The decline from validation to June is reported as uncertainty, not hidden.</p>
           </section>
 
           <section id="recommendations">
             <p class="eyebrow">Ranked recommendations</p>
             <h2>Use the score to start a human review, never to automate a change</h2>
             <ol>
-              <li><strong>Start with the top 100 private scores.</strong> In the sealed measurement, 65% met the decline proxy, compared with 38% from the transparent baseline.</li>
+              <li><strong>Start with the top 100 private scores.</strong> In the sealed measurement, 67% met the decline proxy, compared with 38% from the transparent baseline.</li>
               <li><strong>Choose refresh review</strong> when an important visible item also shows negative recent search momentum.</li>
               <li><strong>Choose search-intent review</strong> when average position worsens, after checking page and query context privately.</li>
               <li><strong>Choose snippet review</strong> only after a visible, relevant item also shows low CTR.</li>

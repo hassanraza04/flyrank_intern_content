@@ -31,12 +31,12 @@ The evaluation is time-aware. Cohorts from December 2025 through April 2026 trai
 
 | Cohort | Method | Base rate | Precision@100 | ROC-AUC |
 | --- | --- | ---: | ---: | ---: |
-| May 2026 validation | Histogram gradient boosting | 0.447 | 0.79 | 0.593 |
+| May 2026 validation | Histogram gradient boosting | 0.447 | 0.80 | 0.591 |
 | May 2026 validation | Momentum baseline | 0.447 | 0.69 | 0.522 |
-| June 2026 sealed | Histogram gradient boosting | 0.519 | 0.65 | 0.560 |
+| June 2026 sealed | Histogram gradient boosting | 0.519 | 0.67 | 0.559 |
 | June 2026 sealed | Momentum baseline | 0.519 | 0.38 | 0.504 |
 
-The final model's precision@100 fell from validation to the sealed cohort. That is expected uncertainty rather than a result to hide. It still exceeded the baseline by 0.27 on the sealed decision metric. The base-rate change also shows why a single percentage should not be treated as a universal promise.
+The final model's precision@100 fell from validation to the sealed cohort. That is expected uncertainty rather than a result to hide. It still exceeded the baseline by 0.29 on the sealed decision metric. The base-rate change also shows why a single percentage should not be treated as a universal promise.
 
 ## 6. Interpretation
 
@@ -44,7 +44,7 @@ The model produced a stronger top-of-queue ranking than a rule that uses only fa
 
 ## 7. Recommendation
 
-An editor should start with the model's top 100 items and inspect them in the private working environment. In the sealed test, 65% of that ranked set met the future decline proxy, compared with 38% from the transparent baseline. A reviewer can then use the available signals to choose a human action:
+An editor should start with the model's top 100 items and inspect them in the private working environment. In the sealed test, 67% of that ranked set met the future decline proxy, compared with 38% from the transparent baseline. A reviewer can then use the available signals to choose a human action:
 
 - **Refresh review:** meaningful visibility with negative recent impression momentum.
 - **Search-intent review:** worsening average position, after checking query and page context privately.
